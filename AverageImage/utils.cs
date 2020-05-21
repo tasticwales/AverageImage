@@ -11,7 +11,7 @@ namespace AverageImage
 {
     public class utils
     {
-        unsafe public static Color GetMostUsedColor(Bitmap bitMap, int mode)
+        unsafe public static Color GetMostUsedColour(Bitmap bitMap, int mode)
         {
             var colorIncidence = new Dictionary<int, int>();
 
@@ -120,27 +120,28 @@ namespace AverageImage
             return new Color();
         }
 
-        private static Color GetNearestColor(Color inputColor)
+        private static Color GetColourName(Color inputColour)
         {
-            var inputRed = Convert.ToDouble(inputColor.R);
-            var inputGreen = Convert.ToDouble(inputColor.G);
-            var inputBlue = Convert.ToDouble(inputColor.B);
-            var colors = new List<Color>();
+            var inputRed = Convert.ToDouble(inputColour.R);
+            var inputGreen = Convert.ToDouble(inputColour.G);
+            var inputBlue = Convert.ToDouble(inputColour.B);
+            var colours = new List<Color>();
 
+            // Build a list of all known, non system colours
             foreach (var knownColor in Enum.GetValues(typeof(KnownColor)))
             {
                 var color = Color.FromKnownColor((KnownColor)knownColor);
 
                 if (!color.IsSystemColor)
                 {
-                    colors.Add(color);
+                    colours.Add(color);
                 }
             }
 
             var nearestColor = Color.Empty;
             var distance = 500.0;
             
-            foreach (var color in colors)
+            foreach (var color in colours)
             {
                 // Compute Euclidean distance between the two colors
                 var testRed = Math.Pow(Convert.ToDouble(color.R) - inputRed, 2.0);
@@ -150,11 +151,13 @@ namespace AverageImage
 
                 if (tempDistance == 0.0)
                 {
+                    // Exact match - return this color
                     return color;
                 }
 
                 if (tempDistance < distance)
                 {
+                    // If this colour is closer to a known colour than the last, then save and update with current details (find the closest)
                     distance = tempDistance;
                     nearestColor = color;
                 }
@@ -163,6 +166,11 @@ namespace AverageImage
             return nearestColor;
         }
 
+        // ******************************************************************************************************************
+        // Download the supplied image file (url) as a byte array, convert to a memory stream and then finaally into a Bitmap
+        // Calaculate the most used colour in this bitmap (GetMostUsedColour)
+        // Convert this most used colour into a known colour name (GetColourName)
+        // ******************************************************************************************************************
         public async Task<string> Process(string url, int mode = 1)
         {
             byte[] imageBytes;
@@ -177,9 +185,8 @@ namespace AverageImage
                         var ms = new MemoryStream(imageBytes);
                         Bitmap image = (Bitmap)Bitmap.FromStream(ms);
 
-                        //var image = (Bitmap)Image.FromFile(@"C:\temp\" + fileName);
-                        var mostUsedColor = GetMostUsedColor(image, mode);
-                        var color = GetNearestColor(mostUsedColor);
+                        var mostUsedColor = GetMostUsedColour(image, mode);
+                        var color = GetColourName(mostUsedColor);
 
                         return color.ToString();
                     }
@@ -188,6 +195,7 @@ namespace AverageImage
             }
             catch (Exception ex)
             {
+                // this could be expanded more to (probably) return a single error code but for demo, we simply display a string
                 return "ERROR OCCURED WITH THE FOLLOWING FILE: " + ex.Message;
             }
         }
