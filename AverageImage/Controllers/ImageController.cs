@@ -24,16 +24,14 @@ namespace AverageImage.Controllers
         [Route("api/image/get/url={url}/mode={mode}")]
         public async Task<string> Get(string url, int mode)
         {
-            var u = new utils();
-            return await u.Process(url, mode);
+            return await utils.Process(url, mode);
         }
 
         [HttpGet]
         [Route("api/image/get/url={url}")]
         public async Task<string> Get(string url)
         {
-            var u = new utils();
-            return  await u.Process(url, Preferred_Mode);
+            return  await utils.Process(url, Preferred_Mode);
         }
 
         [HttpGet]
@@ -41,6 +39,10 @@ namespace AverageImage.Controllers
         public string Get()
         {
             return "Welcome";
+
+            // As we have a logger injected here, we can use if for reporting purposes etc, for example
+            // _logger.LogError(ex.ToString());
+
         }
     }
 }
