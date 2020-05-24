@@ -10,28 +10,20 @@ namespace AverageImage.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private const int Preferred_Mode = 3;
-
         private readonly ILogger<ImageController> _logger;
+        private ServiceImageUtils _ServiceImageUtils { get; set; }
 
-
-        public ImageController(ILogger<ImageController> logger)
+        public ImageController(ILogger<ImageController> logger, ServiceImageUtils serviceImageUtils)
         {
             _logger = logger;
+            _ServiceImageUtils = serviceImageUtils;
         }
 
         [HttpGet]
-        [Route("api/image/get/url={url}/mode={mode}")]
-        public async Task<string> Get(string url, int mode)
+        [Route("api/image/getaveragecolour/imageurl={imageurl}")]
+        public async Task<string> GetAverageColour(string imageUrl)
         {
-            return await utils.Process(url, mode);
-        }
-
-        [HttpGet]
-        [Route("api/image/get/url={url}")]
-        public async Task<string> Get(string url)
-        {
-            return  await utils.Process(url, Preferred_Mode);
+            return  await _ServiceImageUtils.Process(imageUrl);
         }
 
         [HttpGet]
