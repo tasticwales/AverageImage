@@ -112,7 +112,7 @@ namespace AverageImage
         // Calaculate the most used colour in this bitmap (GetPopularColour)
         // Convert this most used colour into a known colour name (GetColourName)
         // ******************************************************************************************************************
-        public async Task<string> Process(string url)
+        public async Task<string> DownloadAndProcessImage(string url)
         {
             byte[] imageBytes;
 

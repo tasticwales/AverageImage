@@ -23,7 +23,7 @@ namespace AverageImage.Controllers
         [Route("api/image/getaveragecolour/imageurl={imageurl}")]
         public async Task<string> GetAverageColour(string imageUrl)
         {
-            return  await _ServiceImageUtils.Process(imageUrl);
+            return  await _ServiceImageUtils.DownloadAndProcessImage(imageUrl);
         }
 
         [HttpGet]
